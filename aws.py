@@ -33,5 +33,3 @@ if __name__ == "__main__":
     aws = AWS()
     pprint(aws.get_regions())
     pprint(aws.get_vpcs('us-east-1'))
-
-# Test...
