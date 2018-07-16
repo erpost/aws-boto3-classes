@@ -22,14 +22,25 @@ class AWS:
         """Returns a list of VPCs in a Region"""
         vpcs = []
         self.region = region
+        self.client = boto3.client(self.service_type, self.region)
         response = self.client.describe_vpcs()
         for vpc in response['Vpcs']:
             vpcs.append(vpc['VpcId'])
 
         return vpcs
 
+    def get_all_vpcs(self):
+        """Returns a dictionary of VPCs in all Regions"""
+        vpc_by_region = {}
+        for region in self.get_regions():
+            for vpc in self.get_vpcs(region):
+                vpc_by_region[vpc] = region
+
+        return vpc_by_region
+
 
 if __name__ == "__main__":
     aws = AWS()
     pprint(aws.get_regions())
-    pprint(aws.get_vpcs('us-east-1'))
+    pprint(aws.get_vpcs('us-west-1'))
+    pprint(aws.get_all_vpcs())
