@@ -39,7 +39,7 @@ class AWS:
         return vpc_region
 
     def get_default_vpc(self, region):
-        """Returns a list of Default VPCs in a Region"""
+        """Returns a Default VPC in a Region"""
         default_vpc = ''
         self.region = region
         self.client = boto3.client(self.service_type, self.region)
