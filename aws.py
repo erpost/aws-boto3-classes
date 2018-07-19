@@ -31,16 +31,43 @@ class AWS:
 
     def get_all_vpcs(self):
         """Returns a dictionary of VPCs in all Regions"""
-        vpc_by_region = {}
+        vpc_region = {}
         for region in self.get_regions():
             for vpc in self.get_vpcs(region):
-                vpc_by_region[vpc] = region
+                vpc_region[vpc] = region
 
-        return vpc_by_region
+        return vpc_region
+
+    def get_default_vpc(self, region):
+        """Returns a list of Default VPCs in a Region"""
+        default_vpc = ''
+        self.region = region
+        self.client = boto3.client(self.service_type, self.region)
+        response = self.client.describe_vpcs()
+        for vpc in response['Vpcs']:
+            if vpc['IsDefault']:
+                default_vpc = vpc['VpcId']
+
+        return default_vpc
+
+    def get_all_default_vpcs(self):
+        """Returns a dictionary of Default VPCs in all Regions"""
+        default_vpcs = {}
+        for region in self.get_regions():
+            default_vpcs[self.get_default_vpc(region)] = region
+
+        return default_vpcs
 
 
 if __name__ == "__main__":
     aws = AWS()
+    print('#' * 50 + '\nGetting All Regions\n' + '#' * 50)
     pprint(aws.get_regions())
-    pprint(aws.get_vpcs('us-west-1'))
+    print('#' * 50 + '\nGetting VPCs in US East 1\n' + '#' * 50)
+    pprint(aws.get_vpcs('us-east-1'))
+    print('#' * 50 + '\nGetting All VPCs in All Regions\n' + '#' * 50)
     pprint(aws.get_all_vpcs())
+    print('#' * 50 + '\nGetting Default VPC in US East 1\n' + '#' * 50)
+    pprint(aws.get_default_vpc('us-east-1'))
+    print('#' * 50 + '\nGetting All Default VPCs in All Regions\n' + '#' * 50)
+    pprint(aws.get_all_default_vpcs())
