@@ -58,16 +58,34 @@ class AWS:
 
         return default_vpcs
 
+    def get_subnets(self, vpc_id):
+        """Returns all subnets in a VPC"""
+        subnets = []
+        response = self.client.describe_subnets(
+            Filters=[
+                {
+                    'Name': 'vpc-id',
+                    'Values': [vpc_id]
+                }
+            ]
+        )
+        for subnet in response['Subnets']:
+            subnets.append(subnet['SubnetId'])
+
+        return subnets
+
 
 if __name__ == "__main__":
     aws = AWS()
-    print('#' * 50 + '\nGetting All Regions\n' + '#' * 50)
-    pprint(aws.get_regions())
-    print('#' * 50 + '\nGetting VPCs in US East 1\n' + '#' * 50)
-    pprint(aws.get_vpcs('us-east-1'))
-    print('#' * 50 + '\nGetting All VPCs in All Regions\n' + '#' * 50)
-    pprint(aws.get_all_vpcs())
-    print('#' * 50 + '\nGetting Default VPC in US East 1\n' + '#' * 50)
-    pprint(aws.get_default_vpc('us-east-1'))
-    print('#' * 50 + '\nGetting All Default VPCs in All Regions\n' + '#' * 50)
-    pprint(aws.get_all_default_vpcs())
+    # print('#' * 50 + '\nGetting All Regions\n' + '#' * 50)
+    # pprint(aws.get_regions())
+    # print('#' * 50 + '\nGetting VPCs in US East 1\n' + '#' * 50)
+    # pprint(aws.get_vpcs('us-east-1'))
+    # print('#' * 50 + '\nGetting All VPCs in All Regions\n' + '#' * 50)
+    # pprint(aws.get_all_vpcs())
+    # print('#' * 50 + '\nGetting Default VPC in US East 1\n' + '#' * 50)
+    # pprint(aws.get_default_vpc('us-east-1'))
+    # print('#' * 50 + '\nGetting All Default VPCs in All Regions\n' + '#' * 50)
+    # pprint(aws.get_all_default_vpcs())
+    print('#' * 50 + '\nGetting All Subnets in a VPC\n' + '#' * 50)
+    pprint(aws.get_subnets('vpc-8221c1f8'))
